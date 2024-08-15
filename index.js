@@ -41,9 +41,23 @@ async function run() {
       .db("prime-electronics")
       .collection("products");
 
+    // get all product
     app.get("/products", async (req, res) => {
-      const products = await productsCollection.find().toArray();
+      const currentPage = parseInt(req.query.currentPage);
+      const itemsPerPage = parseInt(req.query.itemsPerPage);
+
+      const products = await productsCollection
+        .find()
+        .skip(currentPage * itemsPerPage)
+        .limit(itemsPerPage)
+        .toArray();
       res.send(products);
+    });
+
+    app.get("/product-count", async (req, res) => {
+      const count = await productsCollection.countDocuments();
+
+      res.send({ count });
     });
 
     // Send a ping to confirm a successful connection
