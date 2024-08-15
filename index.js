@@ -60,6 +60,18 @@ async function run() {
       res.send({ count });
     });
 
+    // app.get("/specific", async (req, res) => {
+    //   const text = "samsung";
+
+    //   const products = await productsCollection
+    //     .find({
+    //       name: { $regex: "apple", $options: "i" },
+    //     })
+    //     .toArray();
+
+    //   res.send(products);
+    // });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
