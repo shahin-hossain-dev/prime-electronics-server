@@ -45,17 +45,71 @@ async function run() {
     app.get("/products", async (req, res) => {
       const currentPage = parseInt(req.query.currentPage);
       const itemsPerPage = parseInt(req.query.itemsPerPage);
+      const brand = req?.query?.brand;
+      const category = req?.query?.category;
+      const price = req?.query?.price;
 
+      if (brand || category || price) {
+        const query = {};
+        if (brand !== "") {
+          query.company = brand;
+        }
+        if (category !== "") {
+          query.category = category;
+        }
+        if (price !== "") {
+          const range = {
+            $gt: parseInt(price.split("-")[0]),
+            $lt: parseInt(price.split("-")[1]),
+          };
+          query.price = range;
+        }
+        // console.log(query);
+
+        const products = await productsCollection
+          .find(query)
+          .skip(currentPage * itemsPerPage)
+          .limit(itemsPerPage)
+          .toArray();
+        // console.log(products);
+        return res.send(products);
+      }
       const products = await productsCollection
         .find()
         .skip(currentPage * itemsPerPage)
         .limit(itemsPerPage)
         .toArray();
+
       res.send(products);
     });
 
     app.get("/product-count", async (req, res) => {
-      const count = await productsCollection.countDocuments();
+      let count = await productsCollection.countDocuments();
+
+      const brand = req?.query?.brand;
+      const category = req?.query?.category;
+      const price = req?.query?.price;
+
+      if (brand || category || price) {
+        const query = {};
+        if (brand !== "") {
+          query.company = brand;
+        }
+        if (category !== "") {
+          query.category = category;
+        }
+        if (price !== "") {
+          const range = {
+            $gt: parseInt(price.split("-")[0]),
+            $lt: parseInt(price.split("-")[1]),
+          };
+          query.price = range;
+        }
+
+        const products = await productsCollection.find(query).toArray();
+        // console.log(products.length);
+        count = products.length;
+      }
 
       res.send({ count });
     });
