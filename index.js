@@ -34,7 +34,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     // collections
     const productsCollection = client
@@ -49,7 +49,7 @@ async function run() {
       const category = req?.query?.category;
       const price = req?.query?.price;
       const sort = req?.query?.sort;
-      console.log(sort);
+
       if (brand || category || price) {
         const query = {};
         if (brand !== "") {
@@ -65,7 +65,6 @@ async function run() {
           };
           query.price = range;
         }
-        // console.log(query);
 
         const products = await productsCollection
           .find(query)
@@ -138,7 +137,7 @@ async function run() {
     // });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
