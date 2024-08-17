@@ -48,7 +48,8 @@ async function run() {
       const brand = req?.query?.brand;
       const category = req?.query?.category;
       const price = req?.query?.price;
-
+      const sort = req?.query?.sort;
+      console.log(sort);
       if (brand || category || price) {
         const query = {};
         if (brand !== "") {
@@ -74,8 +75,18 @@ async function run() {
         // console.log(products);
         return res.send(products);
       }
+      const sortQuery = {};
+      if (sort === "dateSort") {
+        sortQuery.dateAndTime = 1;
+      } else if (sort === "lowToHigh") {
+        sortQuery.price = 1;
+      } else {
+        sortQuery.price = -1;
+      }
+
       const products = await productsCollection
         .find()
+        .sort(sortQuery)
         .skip(currentPage * itemsPerPage)
         .limit(itemsPerPage)
         .toArray();
